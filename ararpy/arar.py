@@ -24,7 +24,7 @@ from numpy import asarray, average
 from uncertainties import ufloat, umath
 
 from constants import ArArConstants
-from src.plateau import Plateau
+from ararpy.plateau import Plateau
 from stats import calculate_weighted_mean
 
 
