@@ -22,7 +22,7 @@ from setuptools import setup, find_packages
 setup(
     name = "ArArPy",
     version = "0.1",
-    packages = find_packages(),
+    packages = ['src'],
     author = 'Jake Ross',
     author_email = "jirhiker@nmt.edu",
     description = "40Ar/39Ar geochronology package",

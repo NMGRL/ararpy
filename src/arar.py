@@ -22,11 +22,11 @@ from copy import deepcopy
 
 from numpy import asarray, average
 from uncertainties import ufloat, umath
-from numpy import array
 
 from constants import ArArConstants
-from plateau import Plateau
+from src.plateau import Plateau
 from stats import calculate_weighted_mean
+
 
 
 #============= local library imports  ==========================
