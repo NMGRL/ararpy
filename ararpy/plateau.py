@@ -19,7 +19,7 @@
 #============= standard library imports ========================
 from numpy import argmax, array
 #============= local library imports  ==========================
-from stats import calculate_mswd, validate_mswd
+from ararpy.stats import calculate_mswd, validate_mswd
 
 
 def memoize(function):

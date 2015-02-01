@@ -12,24 +12,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#===============================================================================
+# ===============================================================================
 
-#=============enthought library imports=======================
+# =============enthought library imports=======================
 
-#============= standard library imports ========================
+# ============= standard library imports ========================
 import math
 from copy import deepcopy
 
-from numpy import asarray, average
+from numpy import asarray, average, array
 from uncertainties import ufloat, umath
 
+
+# ============= local library imports  ==========================
 from constants import ArArConstants
-from ararpy.plateau import Plateau
+from plateau import Plateau
 from stats import calculate_weighted_mean
-
-
-
-#============= local library imports  ==========================
 
 
 def calculate_F_ratio(m4039, m3739, m3639, pr):
