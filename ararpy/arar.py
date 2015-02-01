@@ -47,41 +47,6 @@ def calculate_F_ratio(m4039, m3739, m3639, pr):
     return F
 
 
-def calculate_plateau_age(ages, errors, k39, kind='inverse_variance', method='fleck 1977'):
-    """
-        ages: list of ages
-        errors: list of corresponding  1sigma errors
-        k39: list of 39ArK signals
-
-        return age, error
-    """
-    # print 'ages=array({})'.format(ages)
-    # print 'errors=array({})'.format(errors)
-    # print 'k39=array({})'.format(k39)
-
-    ages = asarray(ages)
-    errors = asarray(errors)
-
-    k39 = asarray(k39)
-
-    p = Plateau(ages, errors, k39)
-    pidx = p.find_plateaus(method)
-    # pidx = find_plateaus(ages, errors, k39,
-    #                      overlap_sigma=2)
-    if pidx:
-        sx = slice(*pidx)
-        plateau_ages = ages[sx]
-
-        if kind == 'vol_fraction':
-            weights = k39[sx]
-            wm, we = average(plateau_ages, weights=weights)
-        else:
-            plateau_errors = errors[sx]
-            wm, we = calculate_weighted_mean(plateau_ages, plateau_errors)
-
-        return wm, we, pidx
-
-
 def calculate_flux(f, age, arar_constants=None):
     """
         #rad40: radiogenic 40Ar

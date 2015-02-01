@@ -339,7 +339,8 @@ class IsotopicMeasurement(BaseMeasurement):
             return self._error
 
     def _mean_regressor_factory(self):
-        from pychron.core.regression.mean_regressor import MeanRegressor
+        # from pychron.core.regression.mean_regressor import MeanRegressor
+        from regression.mean_regressor import MeanRegressor
 
         xs = self.offset_xs
         reg = MeanRegressor(xs=xs, ys=self.ys,
@@ -354,7 +355,8 @@ class IsotopicMeasurement(BaseMeasurement):
         else:
             # print 'doing import of regresor {}'.format(self.__class__)
             # st=time.time()
-            from pychron.core.regression.ols_regressor import PolynomialRegressor
+            # from pychron.core.regression.ols_regressor import PolynomialRegressor
+            from regression.ols_regressor import PolynomialRegressor
             # print 'doing import of regresor {}'.format(time.time()-st)
 
             reg = PolynomialRegressor(tag=self.name,

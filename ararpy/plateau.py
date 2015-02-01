@@ -5,21 +5,80 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#===============================================================================
+# ===============================================================================
 
-#============= enthought library imports =======================
+# ============= enthought library imports =======================
 
-#============= standard library imports ========================
-from numpy import argmax, array
-#============= local library imports  ==========================
-from ararpy.stats import calculate_mswd, validate_mswd
+# ============= standard library imports ========================
+from numpy import argmax, array, asarray, average
+# ============= local library imports  ==========================
+from ararpy import ALPHAS
+from ararpy.stats import calculate_mswd, validate_mswd, calculate_weighted_mean
+
+
+def calculate_plateau_age(ages, errors, k39, kind='inverse_variance', method='fleck 1977', options=None):
+    """
+        ages: list of ages
+        errors: list of corresponding  1sigma errors
+        k39: list of 39ArK signals
+
+        return age, error
+    """
+    # print 'ages=array({})'.format(ages)
+    # print 'errors=array({})'.format(errors)
+    # print 'k39=array({})'.format(k39)
+    if options is None:
+        options = {}
+
+    ages = asarray(ages)
+    errors = asarray(errors)
+    k39 = asarray(k39)
+
+    force_steps = options.get('force_steps', False)
+    if force_steps:
+        sstep, estep = force_steps
+        sstep, estep = sstep.upper(), estep.upper()
+        if not sstep:
+            sidx = 0
+        else:
+            sidx = ALPHAS.index(sstep)
+
+        n = ages.shape[0] - 1
+        if not estep:
+            eidx = n
+        else:
+            eidx = ALPHAS.index(estep)
+
+        sidx, eidx = min(sidx, eidx), min(max(sidx, eidx), n)
+        pidx = (sidx, eidx) if sidx < n else None
+
+    else:
+        p = Plateau(ages=ages,
+                    errors=errors,
+                    signals=k39,
+                    nsteps=options.get('nsteps', 3),
+                    gas_fraction=options.get('gas_fraction', 50))
+
+        pidx = p.find_plateaus(method)
+
+    if pidx:
+        sx = slice(pidx[0], pidx[1] + 1)
+        plateau_ages = ages[sx]
+        if kind == 'vol_fraction':
+            weights = k39[sx]
+            wm, we = average(plateau_ages, weights=weights)
+        else:
+            plateau_errors = errors[sx]
+            wm, we = calculate_weighted_mean(plateau_ages, plateau_errors)
+
+        return wm, we, pidx
 
 
 def memoize(function):
@@ -35,10 +94,10 @@ def memoize(function):
 
 
 class Plateau(object):
-    ages = None#Array
-    errors = None#Array
-    signals = None#Array
-    exclude = None#List
+    ages = None  #Array
+    errors = None  #Array
+    signals = None  #Array
+    exclude = None  #List
 
     nsteps = 3
     overlap_sigma = 2
@@ -47,6 +106,7 @@ class Plateau(object):
     use_mswd = False  #mahon criterion
 
     total_signal = 0
+
     def __init__(self, ages, errors, signals, exclude=None):
         self.exclude = exclude
         self.signals = signals
@@ -163,6 +223,6 @@ class Plateau(object):
     def check_nsteps(self, start, end):
         return end - start >= self.nsteps
 
-#============= EOF =============================================
+# ============= EOF =============================================
 
 
